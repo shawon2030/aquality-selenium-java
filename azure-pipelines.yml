@@ -5,20 +5,10 @@ pool:
   vmImage: 'windows-latest'
 
 jobs:
-- job: sonar
-  displayName: Analyse code with SonarQube
+- job: Test
+  displayName: Test Automation
 
   steps:
-  - task: SonarCloudPrepare@1
-    displayName: 'Prepare SonarCloud analysis'
-    inputs:
-      SonarCloud: 'SonarCloud'
-      organization: 'aqualityautomation'
-      scannerMode: 'CLI'
-      configMode: 'file'
-      extraProperties: |
-        sonar.coverage.exclusions=**/**
-
   - task: Maven@3
     displayName: 'Build project'
     inputs:
@@ -30,24 +20,6 @@ jobs:
       publishJUnitResults: true
       testResultsFiles: '**/surefire-reports/TEST-*.xml'
       goals: 'clean'
-
-  - task: SonarCloudAnalyze@1
-    displayName: 'Run SonarCloud code analysis'
-    continueOnError: true
-
-  - task: SonarCloudPublish@1
-    displayName: 'Publish SonarCloud quality gate results'
-    inputs:
-      pollingTimeoutSec: '300'
-
-- job: tests
-  displayName: Run tests
-
-  steps:
-  - task: ScreenResolutionUtility@1
-    displayName: 'Set optimal screen resolution'
-    inputs:
-      displaySettings: 'optimal'
 
   - task: Maven@3
     displayName: 'Run tests'
